@@ -2,6 +2,8 @@
 
 EasyBindings is a simple Java framework to create Cocoa based key-value bindings. It uses JavaFX properties to listen for changes.
 
+You should clone it in `{java_project_root}/src/org/panther`.
+
 ## Example
 
 ```java
