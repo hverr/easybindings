@@ -1,6 +1,5 @@
 package org.panther.easybindings;
 
-import com.sun.corba.se.spi.ior.Writeable;
 import java.lang.reflect.*;
 import java.util.function.*;
 
