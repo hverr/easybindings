@@ -1,6 +1,5 @@
 package org.panther.easybindings;
 
-import com.sun.corba.se.spi.ior.Writeable;
 import java.lang.reflect.*;
 import java.util.function.*;
 
@@ -12,7 +11,7 @@ import javafx.beans.value.*;
  * excellent Cocoa key-value framework.
  *
  * <p>Bindings are bidirectional. Objects participating in a value are specified
- * using a key path. All key paths must start with the prefix {@code root.},
+ * using a key path. All key paths must start with the prefix {@code root},
  * e.g. {@code root.house.door.color}.
  *
  * <p>Every component in the key path, including the root, must point to an
@@ -59,9 +58,9 @@ public class EasyBinding {
         this.sourceKeyPath = splitKeyPath(sourceKeyPath);
 
         if(!this.destinationKeyPath[0].equals("root")) {
-            throw new IllegalArgumentException("The destination key path should have the 'root.' prefix");
+            throw new IllegalArgumentException("The destination key path should have the 'root' prefix");
         } else if(!this.sourceKeyPath[0].equals("root")) {
-            throw new IllegalArgumentException("The source key path should have the 'root.' prefix");
+            throw new IllegalArgumentException("The source key path should have the 'root' prefix");
         }
     }
 
