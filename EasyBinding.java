@@ -34,6 +34,7 @@ public class EasyBinding {
     private final String[] destinationKeyPath;
     private final ObservableValue sourceObject;
     private final String[] sourceKeyPath;
+    private final ValueConverter valueConverter;
 
     protected Listener destinationListener;
     protected Listener sourceListener;
@@ -50,18 +51,41 @@ public class EasyBinding {
      * @param destinationKeyPath The destination key path.
      * @param sourceObject The source object.
      * @param sourceKeyPath The source key path.
+     * @param valueConverter Used to convert values between binding endpoints. Can be null.
      */
-    public EasyBinding(ObservableValue destinationObject, String destinationKeyPath, ObservableValue sourceObject, String sourceKeyPath) {
+    public EasyBinding(ObservableValue destinationObject, String destinationKeyPath, ObservableValue sourceObject, String sourceKeyPath, ValueConverter valueConverter) {
         this.destinationObject = destinationObject;
         this.destinationKeyPath = splitKeyPath(destinationKeyPath);
         this.sourceObject = sourceObject;
         this.sourceKeyPath = splitKeyPath(sourceKeyPath);
+        if(valueConverter != null) {
+            this.valueConverter = valueConverter;
+        } else {
+            this.valueConverter = (object) -> { return object; };
+        }
 
         if(!this.destinationKeyPath[0].equals("root")) {
             throw new IllegalArgumentException("The destination key path should have the 'root' prefix");
         } else if(!this.sourceKeyPath[0].equals("root")) {
             throw new IllegalArgumentException("The source key path should have the 'root' prefix");
         }
+    }
+
+    /**
+     * Create a new EasyBinding without a converter.
+     *
+     * <p>Bindings are (for now) bidirectional. So the destination/source
+     * symantics don't actually mean anything.
+     *
+     * <p>See the class description for more information about the parameters.
+     *
+     * @param destinationObject The destination object.
+     * @param destinationKeyPath The destination key path.
+     * @param sourceObject The source object.
+     * @param sourceKeyPath The source key path.
+     */
+    public EasyBinding(ObservableValue destinationObject, String destinationKeyPath, ObservableValue sourceObject, String sourceKeyPath) {
+        this(destinationObject, destinationKeyPath, sourceObject, sourceKeyPath, null);
     }
 
     /**
@@ -101,6 +125,16 @@ public class EasyBinding {
     }
 
     /**
+     * Returns the value converter used for this binding
+     *
+     * @return the value converter passed to the constructor, or the identity
+     * converter if it was null.
+     */
+    public ValueConverter getValueConverter() {
+         return valueConverter;
+    }
+
+    /**
      * Actually binds the destination key path to the source key path.
      *
      * <p>The method will setup listeners for all path components in the
@@ -117,14 +151,16 @@ public class EasyBinding {
             WritableValue sourceValue = getFinalWritableValue(sourceObject, sourceKeyPath);
             if(sourceValue != null) {
                 if(sourceValue.getValue() != value) {
-                    sourceValue.setValue(value);
+                    Object converted = valueConverter.convert(value);
+                    sourceValue.setValue(converted);
                 }
             }
 
             WritableValue destinationValue = getFinalWritableValue(destinationObject, destinationKeyPath);
             if(destinationValue != null) {
                 if(destinationValue.getValue() != value) {
-                    destinationValue.setValue(value);
+                    Object converted = valueConverter.convert(value);
+                    destinationValue.setValue(converted);
                 }
             }
         };

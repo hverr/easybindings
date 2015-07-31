@@ -35,6 +35,24 @@ public class BindingGroup {
      * @param destinationKeyPath See {@code EasyBinding} constructor for more information.
      * @param sourceObject See {@code EasyBinding} constructor for more information.
      * @param sourceKeyPath See {@code EasyBinding} constructor for more information.
+     * @param valueConverter See {@code EasyBinding} constructor for more information.
+     * @return the newly created binding
+     */
+    public EasyBinding bind(ObservableValue destinationObject, String destinationKeyPath, ObservableValue sourceObject, String sourceKeyPath, ValueConverter valueConverter) {
+        EasyBinding b = new EasyBinding(destinationObject, destinationKeyPath, sourceObject, sourceKeyPath, valueConverter);
+        b.bind();
+        bindings.add(b);
+
+        return b;
+    }
+
+    /**
+     * Create a new binding and add it to the group
+     *
+     * @param destinationObject See {@code EasyBinding} constructor for more information.
+     * @param destinationKeyPath See {@code EasyBinding} constructor for more information.
+     * @param sourceObject See {@code EasyBinding} constructor for more information.
+     * @param sourceKeyPath See {@code EasyBinding} constructor for more information.
      * @return the newly created binding
      */
     public EasyBinding bind(ObservableValue destinationObject, String destinationKeyPath, ObservableValue sourceObject, String sourceKeyPath) {
